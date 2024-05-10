@@ -3,11 +3,14 @@ package br.com.masterclass.superpecas.controller;
 import br.com.masterclass.superpecas.model.Carro;
 import br.com.masterclass.superpecas.service.CarroService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/carro")
@@ -62,5 +65,37 @@ public class CarroController {
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable int id) {
         carroService.deleteById(id);
+    }
+
+    @GetMapping("/listaTodosFabricantes")
+    public ResponseEntity<List<String>> listaTodosFabricantes() {
+        List<String> fabricantes = carroService.listaTodosFabricantes();
+        return ResponseEntity.ok().body(fabricantes);
+    }
+    @GetMapping("/listaTodosPaginado")
+    public ResponseEntity<List<Carro>> listaTodosPaginado(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
+        List<Carro> carros = carroService.listaTodosPaginado(page, size);
+        return ResponseEntity.ok().body(carros);
+    }
+    @GetMapping("/listaTodosPaginado/{termo}")
+    public ResponseEntity<List<Carro>> listaTodosPaginado(@PathVariable String termo,
+                                                          @RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size) {
+        List<Carro> carros = carroService.listaTodosPaginado(termo, page, size);
+        return ResponseEntity.ok().body(carros);
+
+    }
+    @GetMapping("/listaTop10Fabricantes")
+    public ResponseEntity<List<String>> listaTop10Fabricantes(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size) {
+        Page<Object[]> fabricantesPage = carroService.listaTop10Fabricantes(page, size);
+
+        List<String> fabricantes = fabricantesPage.getContent()
+                .stream()
+                .map(array -> (String) array[0])
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok().body(fabricantes);
     }
 }
