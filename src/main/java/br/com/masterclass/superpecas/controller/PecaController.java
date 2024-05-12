@@ -1,8 +1,11 @@
 package br.com.masterclass.superpecas.controller;
 
+import br.com.masterclass.superpecas.DTO.PecaDTO;
 import br.com.masterclass.superpecas.model.Peca;
 import br.com.masterclass.superpecas.service.PecaService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -51,16 +54,14 @@ public class PecaController {
     }
 
     @GetMapping("/listaTodosPaginado")
-    public ResponseEntity<List<Peca>> listTodosPaginado(@RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "10") int size) {
-        List<Peca> pecas = pecaService.listaTodosPaginado(page, size);
+    public ResponseEntity<Page<PecaDTO>> listTodosPaginadoDTO(Pageable pageable) {
+        Page<PecaDTO> pecas = pecaService.listaTodosPaginadoDTO(pageable);
         return ResponseEntity.ok().body(pecas);
     }
+
     @GetMapping("/listaTodosPaginado/{termo}")
-    public ResponseEntity<List<Peca>> listTodosPaginado(@RequestParam(required = false) String termo,
-                                                        @RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "10") int size) {
-        List<Peca> pecas = pecaService.listaTodosPaginado(termo, page, size);
+    public ResponseEntity<Page<PecaDTO>> listTodosPaginadoDTO(@RequestParam(required = false) String termo, Pageable pageable) {
+        Page<PecaDTO> pecas = pecaService.listaTodosPaginadoDTO(termo, pageable);
         return ResponseEntity.ok().body(pecas);
     }
     @GetMapping("/listaTop10CarroComMaisPecas")

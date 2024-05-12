@@ -1,11 +1,14 @@
 package br.com.masterclass.superpecas.service;
 
+import br.com.masterclass.superpecas.DTO.PecaDTO;
 import br.com.masterclass.superpecas.model.Peca;
 import br.com.masterclass.superpecas.repository.CarroRepository;
 import br.com.masterclass.superpecas.repository.PecaRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +18,13 @@ import java.util.Optional;
 public class PecaService {
 
     private final PecaRepository pecaRepository;
+    private final ModelMapper modelMapper;
 
 
     @Autowired
-    public PecaService(PecaRepository pecaRepository) {
+    public PecaService(PecaRepository pecaRepository, ModelMapper modelMapper) {
         this.pecaRepository = pecaRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<Peca> findAll() {
@@ -38,23 +43,20 @@ public class PecaService {
         pecaRepository.deleteById(pecaID);
     }
 
-    public List<Peca> listaTodosPaginado(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Peca> pecasPaginadas = pecaRepository.findAll(pageable);
-        return pecasPaginadas.getContent();
+    public Page<PecaDTO> listaTodosPaginadoDTO(Pageable pageable) {
+        Page<Peca> pecasPage = pecaRepository.findAll(pageable);
+        return pecasPage.map(peca -> modelMapper.map(peca, PecaDTO.class));
     }
 
-    public List<Peca> listaTodosPaginado(String termo, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Peca> pecasPaginadas;
-
-        if (termo != null && !termo.isEmpty()) {
-            pecasPaginadas = pecaRepository.findByNomeContainingIgnoreCase(termo, pageable);
-        } else {
-            pecasPaginadas = pecaRepository.findAll(pageable);
-        }
-
-        return pecasPaginadas.getContent();
+    public Page<PecaDTO> listaTodosPaginadoDTO(String termo, Pageable pageable) {
+        Page<Peca> pecasPage = pecaRepository.findByNomeContainingIgnoreCaseOrNumeroSerieContainingIgnoreCaseOrFabricanteContainingIgnoreCaseOrModeloCarroContainingIgnoreCase(
+                termo,
+                termo,
+                termo,
+                termo,
+                pageable
+        );
+        return pecasPage.map(peca -> modelMapper.map(peca, PecaDTO.class));
     }
 
     public List<Object[]> listaTop10CarroComMaisPecas() {

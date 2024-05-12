@@ -1,10 +1,12 @@
 package br.com.masterclass.superpecas.controller;
 
+import br.com.masterclass.superpecas.DTO.CarroDTO;
 import br.com.masterclass.superpecas.model.Carro;
 import br.com.masterclass.superpecas.service.CarroService;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -73,18 +75,15 @@ public class CarroController {
         return ResponseEntity.ok().body(fabricantes);
     }
     @GetMapping("/listaTodosPaginado")
-    public ResponseEntity<List<Carro>> listaTodosPaginado(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
-        List<Carro> carros = carroService.listaTodosPaginado(page, size);
+    public ResponseEntity<Page<CarroDTO>> listaTodosPaginadoDTO(Pageable pageable) {
+        Page<CarroDTO> carros = carroService.listaTodosPaginadoDTO(pageable);
         return ResponseEntity.ok().body(carros);
     }
-    @GetMapping("/listaTodosPaginado/{termo}")
-    public ResponseEntity<List<Carro>> listaTodosPaginado(@PathVariable String termo,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
-        List<Carro> carros = carroService.listaTodosPaginado(termo, page, size);
-        return ResponseEntity.ok().body(carros);
 
+    @GetMapping("/listaTodosPaginado/{termo}")
+    public ResponseEntity<Page<CarroDTO>> listaTodosPaginadoDTO(@PathVariable(required = false) String termo, Pageable pageable) {
+        Page<CarroDTO> carros = carroService.listaTodosPaginadoDTO(termo, pageable);
+        return ResponseEntity.ok().body(carros);
     }
     @GetMapping("/listaTop10Fabricantes")
     public ResponseEntity<List<String>> listaTop10Fabricantes(@RequestParam(defaultValue = "0") int page,

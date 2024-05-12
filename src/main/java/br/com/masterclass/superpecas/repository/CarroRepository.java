@@ -16,7 +16,8 @@ public interface CarroRepository extends JpaRepository<Carro, Integer> {
     @Query("SELECT DISTINCT c.fabricante FROM Carro c")
     List<String> findAllFabricantes();
     Page<Carro> findAll(Pageable pageable);
-    Page<Carro> findAllByNomeModeloContainingIgnoreCase(String termo, Pageable pageable);
+    Page<Carro> findAllByNomeModeloContainingIgnoreCaseOrFabricanteContainingIgnoreCaseOrCodigoUnicoContainingIgnoreCase(
+            String nomeModelo, String fabricante, String codigoUnico, Pageable pageable);
     @Query("SELECT c.fabricante, COUNT(c) AS count FROM Carro c GROUP BY c.fabricante ORDER BY count DESC")
     Page<Object[]> findTop10Fabricantes(Pageable pageable);
 

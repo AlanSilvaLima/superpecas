@@ -1,7 +1,9 @@
 package br.com.masterclass.superpecas.service;
 
+import br.com.masterclass.superpecas.DTO.CarroDTO;
 import br.com.masterclass.superpecas.model.Carro;
 import br.com.masterclass.superpecas.repository.CarroRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,10 +17,12 @@ import java.util.List;
 public class CarroService {
 
     private final CarroRepository carroRepository;
+    private final ModelMapper  modelMapper;
 
     @Autowired
-    public CarroService(CarroRepository carroRepository) {
+    public CarroService(CarroRepository carroRepository, ModelMapper modelMapper) {
         this.carroRepository = carroRepository;
+        this.modelMapper = modelMapper;
     }
 
     public List<Carro> findAll() {
@@ -41,23 +45,20 @@ public class CarroService {
         return carroRepository.findAllFabricantes();
     }
 
-    public List<Carro> listaTodosPaginado(int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Carro> carrosPaginados = carroRepository.findAll(pageable);
-        return carrosPaginados.getContent();
+    public Page<CarroDTO> listaTodosPaginadoDTO(Pageable pageable) {
+        Page<Carro> carros = carroRepository.findAll(pageable);
+        return carros.map(carro -> modelMapper.map(carro, CarroDTO.class));
     }
 
-    public List<Carro> listaTodosPaginado(String termo, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Carro> carrosPaginados;
-
+    public Page<CarroDTO> listaTodosPaginadoDTO(String termo, Pageable pageable) {
+        Page<Carro> carrosPage;
         if (termo != null && !termo.isEmpty()) {
-            carrosPaginados = carroRepository.findAllByNomeModeloContainingIgnoreCase(termo, pageable);
+            carrosPage = carroRepository.findAllByNomeModeloContainingIgnoreCaseOrFabricanteContainingIgnoreCaseOrCodigoUnicoContainingIgnoreCase(
+                    termo, termo, termo, pageable);
         } else {
-            carrosPaginados = carroRepository.findAll(pageable);
+            carrosPage = carroRepository.findAll(pageable);
         }
-
-        return carrosPaginados.getContent();
+        return carrosPage.map(carro -> modelMapper.map(carro, CarroDTO.class));
     }
 
     public Page<Object[]> listaTop10Fabricantes(int page, int size) {
