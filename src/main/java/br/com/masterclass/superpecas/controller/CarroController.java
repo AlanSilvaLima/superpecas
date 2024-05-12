@@ -75,13 +75,16 @@ public class CarroController {
         return ResponseEntity.ok().body(fabricantes);
     }
     @GetMapping("/listaTodosPaginado")
-    public ResponseEntity<Page<CarroDTO>> listaTodosPaginadoDTO(Pageable pageable) {
+    public ResponseEntity<Page<CarroDTO>> listaTodosPaginadoDTO(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size,Pageable pageable) {
         Page<CarroDTO> carros = carroService.listaTodosPaginadoDTO(pageable);
         return ResponseEntity.ok().body(carros);
     }
 
     @GetMapping("/listaTodosPaginado/{termo}")
-    public ResponseEntity<Page<CarroDTO>> listaTodosPaginadoDTO(@PathVariable(required = false) String termo, Pageable pageable) {
+    public ResponseEntity<Page<CarroDTO>> listaTodosPaginadoDTO(@RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @PathVariable(required = false) String termo, Pageable pageable) {
         Page<CarroDTO> carros = carroService.listaTodosPaginadoDTO(termo, pageable);
         return ResponseEntity.ok().body(carros);
     }

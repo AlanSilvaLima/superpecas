@@ -54,13 +54,17 @@ public class PecaController {
     }
 
     @GetMapping("/listaTodosPaginado")
-    public ResponseEntity<Page<PecaDTO>> listTodosPaginadoDTO(Pageable pageable) {
+    public ResponseEntity<Page<PecaDTO>> listTodosPaginadoDTO(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              Pageable pageable) {
         Page<PecaDTO> pecas = pecaService.listaTodosPaginadoDTO(pageable);
         return ResponseEntity.ok().body(pecas);
     }
 
     @GetMapping("/listaTodosPaginado/{termo}")
-    public ResponseEntity<Page<PecaDTO>> listTodosPaginadoDTO(@RequestParam(required = false) String termo, Pageable pageable) {
+    public ResponseEntity<Page<PecaDTO>> listTodosPaginadoDTO(@RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "10") int size,
+                                                              @RequestParam(required = false) String termo, Pageable pageable) {
         Page<PecaDTO> pecas = pecaService.listaTodosPaginadoDTO(termo, pageable);
         return ResponseEntity.ok().body(pecas);
     }
