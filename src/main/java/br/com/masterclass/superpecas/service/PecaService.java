@@ -4,6 +4,7 @@ import br.com.masterclass.superpecas.DTO.PecaDTO;
 import br.com.masterclass.superpecas.model.Peca;
 import br.com.masterclass.superpecas.repository.CarroRepository;
 import br.com.masterclass.superpecas.repository.PecaRepository;
+import br.com.masterclass.superpecas.repository.projection.TopCarroProjection;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -59,7 +60,7 @@ public class PecaService {
         return pecasPage.map(peca -> modelMapper.map(peca, PecaDTO.class));
     }
 
-    public List<Object[]> listaTop10CarroComMaisPecas() {
+    public List<TopCarroProjection> listaTop10CarroComMaisPecas() {
         return pecaRepository.findTop10CarroComMaisPecas();
     }
 

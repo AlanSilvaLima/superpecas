@@ -2,6 +2,7 @@ package br.com.masterclass.superpecas.controller;
 
 import br.com.masterclass.superpecas.DTO.PecaDTO;
 import br.com.masterclass.superpecas.model.Peca;
+import br.com.masterclass.superpecas.repository.projection.TopCarroProjection;
 import br.com.masterclass.superpecas.service.PecaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -102,8 +103,8 @@ public class PecaController {
     @ApiResponse(responseCode = "200", description = "Lista dos top 10 carros com mais peças encontrada",
             content = { @Content(mediaType = "application/json", array = @ArraySchema(schema = @io.swagger.v3.oas.annotations.media.Schema(type = "string"))) })
     @GetMapping("/listaTop10CarroComMaisPecas")
-    public ResponseEntity<List<Object[]>> listaTop10CarroComMaisPecas() {
-        List<Object[]> top10CarrosComMaisPecas = pecaService.listaTop10CarroComMaisPecas();
+    public ResponseEntity<List<TopCarroProjection>> listaTop10CarroComMaisPecas() {
+        List<TopCarroProjection> top10CarrosComMaisPecas = pecaService.listaTop10CarroComMaisPecas();
         return ResponseEntity.ok().body(top10CarrosComMaisPecas);
     }
 }
