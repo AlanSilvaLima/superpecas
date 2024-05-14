@@ -18,7 +18,7 @@ public interface PecaRepository extends JpaRepository<Peca, Integer> {
     Page<Peca> findByNomeContainingIgnoreCaseOrNumeroSerieContainingIgnoreCaseOrFabricanteContainingIgnoreCaseOrModeloCarroContainingIgnoreCase(String nome, String numeroSerie, String fabricante, String modeloCarro, Pageable pageable);
 
 
-    @Query(value = "SELECT c.NomeModelo AS nomeModelo " +
+    @Query(value = "SELECT c.NomeModelo AS nomeModelo, COUNT(p.PecaID) AS totalPecas " +
             "FROM Carros c " +
             "JOIN Pecas p ON c.CarroID = p.CarroID " +
             "GROUP BY c.NomeModelo " +
